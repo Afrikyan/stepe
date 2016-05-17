@@ -1,8 +1,8 @@
 from django.conf.urls import patterns, include, url
-from django.http import Http404
 from django.contrib import admin
+from django.http import Http404
 
-from qa.views import test
+from ask.qa.views import test
 
 admin.autodiscover()
 
