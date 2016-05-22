@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 
 class QuestionManager(models.Manager):
@@ -20,10 +21,13 @@ class Question(models.Model):
         User, related_name="question_like", blank=True)
 
     class Meta:
-        ordering = ('-added_at',)
+        ordering = ('-id',)
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('question_detail', kwargs={'id': self.pk})
 
 
 class Answer(models.Model):
@@ -36,4 +40,4 @@ class Answer(models.Model):
         ordering = ('added_at',)
 
     def __unicode__(self):
-        return self.author
+        return self.author.first_name
