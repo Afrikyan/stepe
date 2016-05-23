@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.contrib.auth import login, logout
 
 from qa.models import Question
 from qa.utils import paginate
-from qa.forms import AnswerForm, AskForm
+from qa.forms import AnswerForm, AskForm, SignupForm, LoginForm
 
 
 def test(request, *args, **kwargs):
@@ -73,3 +74,35 @@ def question_answer(request):
             url = reverse('question_detail', args=[answer.question.id])
             return HttpResponseRedirect(url)
     return HttpResponseRedirect('/')
+
+
+def user_signup(request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/')
+    form = SignupForm()
+    context = {'form': form}
+    return render(request, 'signup.html', context)
+
+
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            if user is not None:
+                login(request, user)
+                return HttpResponseRedirect('/')
+    form = LoginForm()
+    context = {'form': form}
+    return render(request, 'login.html', context)
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
